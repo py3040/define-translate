@@ -76,7 +76,9 @@ cp .env.example .env      # then fill in the values (see Configuration below)
 python -m uvicorn app.main:app --reload
 ```
 
-The API is now at `http://localhost:8000` (health check at `/health`).
+Your **local** dev server is now at `http://localhost:8000` (health check at
+`/health`). This is only for local development — the deployed production API
+lives at the "Live backend" URL above.
 
 ### 2. Extension
 
