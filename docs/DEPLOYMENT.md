@@ -1,8 +1,9 @@
 # Deployment Guide
 
 The backend is containerized with the root [`Dockerfile`](../Dockerfile) and
-deployed to the **AI Builder Space** platform (Koyeb under the hood). The live
-service is at **https://define-translate.ai-builders.space**.
+deployed to the **AI Builder Space** platform (Koyeb under the hood). The service
+is reachable at `https://<service-name>.ai-builders.space`, where `<service-name>`
+is the name used when deploying.
 
 ## How it works
 
