@@ -9,11 +9,6 @@ The project has two parts: a **Chrome extension** (Manifest V3) for the in-page 
 and a **FastAPI backend** that talks to the AI Builder Space API, with rate
 limiting, caching, and abuse protection.
 
-## Live backend
-
-- API base: **https://define-translate.ai-builders.space**
-- Health check: **https://define-translate.ai-builders.space/health**
-
 ## Features
 
 - **Context-aware definitions** — uses the sentence around the selection, not just the word.
@@ -77,8 +72,7 @@ python -m uvicorn app.main:app --reload
 ```
 
 Your **local** dev server is now at `http://localhost:8000` (health check at
-`/health`). This is only for local development — the deployed production API
-lives at the "Live backend" URL above.
+`/health`). This is only for local development.
 
 ### 2. Extension
 
