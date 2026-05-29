@@ -1,0 +1,20 @@
+{
+  "repo_url": "https://github.com/py3040/define-translate",
+  "service_name": "define-translate",
+  "branch": "main",
+  "port": 8000,
+  "env_vars": {
+    "AI_BUILDER_BASE_URL": "https://space.ai-builders.com/backend",
+    "UPSTASH_REDIS_REST_URL": "<set-at-deploy-time>",
+    "UPSTASH_REDIS_REST_TOKEN": "<set-at-deploy-time>",
+    "HMAC_SECRET": "<set-at-deploy-time>",
+    "FINGERPRINT_SECRET": "<set-at-deploy-time>",
+    "ADMIN_KEY": "<set-at-deploy-time>",
+    "IP_DEBUG_TOKEN": "<set-at-deploy-time>"
+  },
+  "_notes": [
+    "AI_BUILDER_TOKEN is injected automatically by the platform; do NOT add it here.",
+    "Real secret values are kept in backend/.env (gitignored) and passed to POST /v1/deployments at deploy time.",
+    "This example file is safe to commit; it contains no secrets."
+  ]
+}

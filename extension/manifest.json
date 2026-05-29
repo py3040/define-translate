@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Define & Translate",
+  "version": "1.0.0",
+  "description": "Contextual meaning and translation lookup",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://*/*", "http://localhost:8000/*", "http://127.0.0.1:8000/*"],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["content/content.css"],
+      "matches": ["https://*/*"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "exclude_matches": [
+        "*://*/*login*",
+        "*://*/*log-in*",
+        "*://*/*logon*",
+        "*://*/*log-on*",
+        "*://*/*signin*",
+        "*://*/*sign-in*",
+        "*://*/*signon*",
+        "*://*/*sign-on*",
+        "*://*/*payment*",
+        "*://*/*checkout*"
+      ],
+      "js": ["shared/constants.js", "content/content.js"]
+    }
+  ]
+}
