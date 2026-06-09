@@ -38,14 +38,26 @@ def get_settings() -> Settings:
     return Settings()
 
 
-def get_client_ip(request: Request) -> str:
-    """Get client IP, using X-Forwarded-For if behind trusted proxy."""
-    forwarded = request.headers.get("x-forwarded-for") or request.headers.get("forwarded")
-    if forwarded:
-        client_ip = forwarded.split(",")[0].strip()
-    else:
-        client_ip = request.client.host if request.client else "0.0.0.0"
-    return client_ip
+def get_client_ip(request: Request, trusted_hops: int) -> str:
+    """Return the real client IP for rate limiting.
+
+    Behind this platform, a fixed number of trusted proxies (platform proxy +
+    Cloudflare) append to ``X-Forwarded-For``, so the genuine client IP is the
+    entry ``trusted_hops`` positions from the right. Anything further left is
+    client-supplied and must not be trusted (it can be spoofed to bypass
+    per-IP limits). Verified empirically via GET /api/_debug/ip across home,
+    VPN and cellular networks.
+    """
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        parts = [p.strip() for p in xff.split(",") if p.strip()]
+        if len(parts) >= trusted_hops >= 1:
+            return parts[-trusted_hops]
+        if parts:
+            # Fewer entries than expected (e.g. local/dev): fall back to the
+            # right-most, which is still the closest trusted-proxy value.
+            return parts[-1]
+    return request.client.host if request.client else "0.0.0.0"
 
 
 def canonicalize_page_url(url: str) -> str:
@@ -97,7 +109,7 @@ async def lookup(
     utc_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     page_url_canonical = canonicalize_page_url(body.page_url)
-    client_ip = get_client_ip(request)
+    client_ip = get_client_ip(request, settings.trusted_proxy_hops)
     hashed_ip = hash_client_ip(client_ip, settings.hmac_secret)
 
     def _err(

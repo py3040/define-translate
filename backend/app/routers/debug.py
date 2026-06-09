@@ -66,7 +66,7 @@ async def debug_ip(request: Request, token: str = "") -> JSONResponse:
             "tcp_peer": {"host": peer_host, "port": peer_port},
             # What the CURRENT rate limiter would key on for this request.
             # Compare this against the real source IP you sent from.
-            "current_limiter_ip": get_client_ip(request),
+            "current_limiter_ip": get_client_ip(request, settings.trusted_proxy_hops),
             # Forwarding headers, parsed.
             "x_forwarded_for_raw": xff_raw,
             "x_forwarded_for_chain": xff_chain,
