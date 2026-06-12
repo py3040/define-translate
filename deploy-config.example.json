@@ -9,8 +9,7 @@
     "UPSTASH_REDIS_REST_TOKEN": "<set-at-deploy-time>",
     "HMAC_SECRET": "<set-at-deploy-time>",
     "FINGERPRINT_SECRET": "<set-at-deploy-time>",
-    "ADMIN_KEY": "<set-at-deploy-time>",
-    "IP_DEBUG_TOKEN": "<set-at-deploy-time>"
+    "ADMIN_KEY": "<set-at-deploy-time>"
   },
   "_notes": [
     "AI_BUILDER_TOKEN is injected automatically by the platform; do NOT add it here.",

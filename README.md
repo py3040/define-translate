@@ -40,7 +40,7 @@ Code/
 ├── backend/              # FastAPI server
 │   ├── app/
 │   │   ├── main.py       # app entrypoint, middleware, error handlers
-│   │   ├── routers/      # lookup, analytics, debug
+│   │   ├── routers/      # lookup, analytics
 │   │   └── services/     # redis, hashing, normalization, AI client
 │   ├── requirements.txt
 │   └── .env.example      # template for required env vars (no secrets)
@@ -103,7 +103,6 @@ injected at deploy time in production). See [`docs/SECRETS.md`](docs/SECRETS.md)
 | `HMAC_SECRET`              | yes      | Secret for hashing client IPs                    |
 | `FINGERPRINT_SECRET`       | yes      | Secret for request fingerprinting (cache keys)   |
 | `ADMIN_KEY`                | no       | Unlocks `GET /api/admin/analytics`               |
-| `IP_DEBUG_TOKEN`           | no       | Enables `GET /api/_debug/ip` diagnostics         |
 
 ## API
 
@@ -112,7 +111,6 @@ injected at deploy time in production). See [`docs/SECRETS.md`](docs/SECRETS.md)
 | `POST` | `/api/lookup`           | Context-aware definition and/or translation     |
 | `GET`  | `/health`               | Health check                                    |
 | `GET`  | `/api/admin/analytics`  | Usage analytics (requires `X-Admin-Key` header) |
-| `GET`  | `/api/_debug/ip`        | IP-forwarding diagnostics (requires `?token=`)  |
 
 ## Deployment
 

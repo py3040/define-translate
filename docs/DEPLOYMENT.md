@@ -71,7 +71,6 @@ Set these in `backend/.env`; `deploy.py` forwards all but `AI_BUILDER_TOKEN`
 | `HMAC_SECRET`              | yes                      | IP hashing                               |
 | `FINGERPRINT_SECRET`       | yes                      | Cache-key fingerprinting                 |
 | `ADMIN_KEY`                | yes (if set)             | Unlocks `GET /api/admin/analytics`       |
-| `IP_DEBUG_TOKEN`           | yes (if set)             | Enables `GET /api/_debug/ip`             |
 
 ## Platform constraints
 

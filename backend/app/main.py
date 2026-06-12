@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 
-from app.routers import analytics, debug, lookup
+from app.routers import analytics, lookup
 from app.services.errors import (
     _classify_validation_error,
     _sanitize_pydantic_errors,
@@ -32,7 +32,6 @@ app.add_middleware(
 
 app.include_router(lookup.router, prefix="/api", tags=["lookup"])
 app.include_router(analytics.router, prefix="/api", tags=["analytics"])
-app.include_router(debug.router, prefix="/api", tags=["debug"])
 
 
 @app.middleware("http")

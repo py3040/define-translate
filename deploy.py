@@ -38,7 +38,6 @@ ENV_VAR_KEYS = [
     "HMAC_SECRET",
     "FINGERPRINT_SECRET",
     "ADMIN_KEY",
-    "IP_DEBUG_TOKEN",
 ]
 
 ENV_PATH = Path(__file__).resolve().parent / "backend" / ".env"

@@ -45,8 +45,7 @@ def get_client_ip(request: Request, trusted_hops: int) -> str:
     Cloudflare) append to ``X-Forwarded-For``, so the genuine client IP is the
     entry ``trusted_hops`` positions from the right. Anything further left is
     client-supplied and must not be trusted (it can be spoofed to bypass
-    per-IP limits). Verified empirically via GET /api/_debug/ip across home,
-    VPN and cellular networks.
+    per-IP limits). Verified empirically across home, VPN and cellular networks.
     """
     xff = request.headers.get("x-forwarded-for")
     if xff:
