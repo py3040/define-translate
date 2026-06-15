@@ -4,7 +4,7 @@
   "branch": "main",
   "port": 8000,
   "env_vars": {
-    "AI_BUILDER_BASE_URL": "https://space.ai-builders.com/backend",
+    "AI_BUILDER_BASE_URL": "<set-at-deploy-time>",
     "UPSTASH_REDIS_REST_URL": "<set-at-deploy-time>",
     "UPSTASH_REDIS_REST_TOKEN": "<set-at-deploy-time>",
     "HMAC_SECRET": "<set-at-deploy-time>",

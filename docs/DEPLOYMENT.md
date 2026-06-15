@@ -1,9 +1,7 @@
 # Deployment Guide
 
 The backend is containerized with the root [`Dockerfile`](../Dockerfile) and
-deployed to the **AI Builder Space** platform (Koyeb under the hood). The service
-is reachable at `https://<service-name>.ai-builders.space`, where `<service-name>`
-is the name used when deploying.
+deployed to the **AI Builder Space** platform. The service is reachable at `https://<service-name>.ai-builders.space`, where `<service-name>` is the name used when deploying.
 
 ## How it works
 
@@ -16,7 +14,7 @@ variables at deploy time (the `deploy.py` helper reads them from `backend/.env`)
 ## Prerequisites
 
 - The repo is public: https://github.com/py3040/define-translate
-- `backend/.env` exists locally and is filled in (see [SECRETS.md](SECRETS.md)).
+- `backend/.env` exists locally and is filled in.
   It is gitignored and must never be committed.
 - Python 3.11+ available locally (the `deploy.py` helper uses only the standard library).
 
@@ -57,20 +55,6 @@ variables at deploy time (the `deploy.py` helper reads them from `backend/.env`)
    python deploy.py logs runtime  # runtime logs
    ```
 
-## Environment variables
-
-Set these in `backend/.env`; `deploy.py` forwards all but `AI_BUILDER_TOKEN`
-(which the platform injects). See [SECRETS.md](SECRETS.md) for details.
-
-| Variable                   | Forwarded by `deploy.py` | Notes                                    |
-| -------------------------- | ------------------------ | ---------------------------------------- |
-| `AI_BUILDER_BASE_URL`      | yes                      | API base URL                             |
-| `AI_BUILDER_TOKEN`         | no (auto-injected)       | Provided by the platform at runtime      |
-| `UPSTASH_REDIS_REST_URL`   | yes                      | Upstash Redis REST URL                   |
-| `UPSTASH_REDIS_REST_TOKEN` | yes                      | Upstash Redis REST token                 |
-| `HMAC_SECRET`              | yes                      | IP hashing                               |
-| `FINGERPRINT_SECRET`       | yes                      | Cache-key fingerprinting                 |
-| `ADMIN_KEY`                | yes (if set)             | Unlocks `GET /api/admin/analytics`       |
 
 ## Platform constraints
 
@@ -78,8 +62,7 @@ Set these in `backend/.env`; `deploy.py` forwards all but `AI_BUILDER_TOKEN`
 - **Single process / single port** — the app must honor the `PORT` env var
   (the `Dockerfile` uses `sh -c "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"`).
 - **256 MB RAM** (nano container) — keep dependencies lean.
-- **Free hosting** for 12 months from the first successful deployment. Contact
-  your instructor to delete a service or extend hosting.
+- **Free hosting** for 12 months from the first successful deployment. Contact AI Builder Space admin to delete a service or extend hosting.
 
 ## Extension → backend
 

@@ -1,9 +1,6 @@
 # Define & Translate
 
-Look up the **contextual meaning** and **translation** of any word or phrase on a
-web page — without leaving the page. Select text, and an in-page panel returns a
-definition that accounts for the surrounding context, plus a translation into your
-chosen language.
+Look up the **contextual meaning** and **contextual translation** of any word, phrase, or sentence(s) (up to 300 chars) on a web page — without leaving the page. Select text, and an in-page panel returns a definition and a translation (if chosen) that accounts for the surrounding context.
 
 The project has two parts: a **Chrome extension** (Manifest V3) for the in-page UI
 and a **FastAPI backend** that talks to the AI Builder Space API, with rate
@@ -11,12 +8,12 @@ limiting, caching, and abuse protection.
 
 ## Features
 
-- **Context-aware definitions** — uses the sentence around the selection, not just the word.
-- **On-demand translation** into 14 languages (see `extension/shared/constants.js`).
-- **In-page panel** — no popups or new tabs; works on any `https://` site.
-- **Abuse & cost controls** — per-install and per-IP daily/burst limits via Redis.
+- **Context-aware definitions** — uses the surrounding sentence for context, with up to 300 chars included.
+- **Context-aware translation** into 14 languages (see `extension/shared/constants.js`).
+- **In-page panel** — less distraction.
+- **Abuse & cost controls** — per-install and per-IP daily/burst limits.
 - **Response caching** — identical lookups are served from cache (24h TTL).
-- **Privacy-conscious** — client IPs are HMAC-hashed; no raw IPs or secrets are logged.
+- **Privacy-conscious** — client IPs are HMAC-hashed; no raw IPs are logged. Works on `https://` sites only (excluding payment or login pages)
 
 ## Tech stack
 
@@ -36,14 +33,14 @@ Code/
 │   ├── manifest.json
 │   ├── background/       # service worker (proxies API calls)
 │   ├── content/          # in-page UI (content script + CSS)
-│   └── shared/           # shared constants (incl. API base URL)
+│   └── shared/           # shared constants
 ├── backend/              # FastAPI server
 │   ├── app/
 │   │   ├── main.py       # app entrypoint, middleware, error handlers
 │   │   ├── routers/      # lookup, analytics
 │   │   └── services/     # redis, hashing, normalization, AI client
 │   ├── requirements.txt
-│   └── .env.example      # template for required env vars (no secrets)
+│   └── .env.example      # template for required env vars
 ├── docs/                 # architecture, secrets, deployment, verification
 ├── Dockerfile            # builds the backend for deployment
 └── deploy.py             # helper to (re)deploy and check status
@@ -58,51 +55,17 @@ Code/
 - An AI Builder Space token
 - Google Chrome (or any Chromium browser)
 
-### 1. Backend
+### Local deployment
 
-```bash
-cd Code/backend
-python -m venv .venv
-# Windows PowerShell: .\.venv\Scripts\Activate.ps1
-# macOS/Linux:        source .venv/bin/activate
-pip install -r requirements.txt
-
-cp .env.example .env      # then fill in the values (see Configuration below)
-python -m uvicorn app.main:app --reload
-```
-
-Your **local** dev server is now at `http://localhost:8000` (health check at
-`/health`). This is only for local development.
-
-### 2. Extension
-
-1. Open `chrome://extensions/`
-2. Enable **Developer mode**
-3. **Load unpacked** → select `Code/extension`
-4. Select text on any `https://` page to use it.
-
-By default the extension talks to the **deployed** backend. To point it at your
-local server, run this in the extension's service-worker console:
-
-```js
-chrome.storage.local.set({ api_base_url: "http://localhost:8000" })
-```
+1. Deploy FastAPI locally
+2. Load unpacked to Chrome extension
+3. Select text on any `https://` page to use it (except payment or login page)
 
 ## Configuration
 
 Backend configuration is read from environment variables (`backend/.env` locally;
-injected at deploy time in production). See [`docs/SECRETS.md`](docs/SECRETS.md) and
-[`backend/.env.example`](backend/.env.example). **Never commit `.env` or real secrets.**
+injected at deploy time in production). See [`backend/.env.example`](backend/.env.example). **Never commit `.env` or real secrets.**
 
-| Variable                   | Required | Purpose                                          |
-| -------------------------- | -------- | ------------------------------------------------ |
-| `AI_BUILDER_BASE_URL`      | yes      | AI Builder Space API base URL                    |
-| `AI_BUILDER_TOKEN`         | yes      | Bearer token (auto-injected by the platform)     |
-| `UPSTASH_REDIS_REST_URL`   | yes      | Upstash Redis REST URL                           |
-| `UPSTASH_REDIS_REST_TOKEN` | yes      | Upstash Redis REST token                         |
-| `HMAC_SECRET`              | yes      | Secret for hashing client IPs                    |
-| `FINGERPRINT_SECRET`       | yes      | Secret for request fingerprinting (cache keys)   |
-| `ADMIN_KEY`                | no       | Unlocks `GET /api/admin/analytics`               |
 
 ## API
 
@@ -115,7 +78,7 @@ injected at deploy time in production). See [`docs/SECRETS.md`](docs/SECRETS.md)
 ## Deployment
 
 The backend is containerized (`Dockerfile`) and deployed to the
-`ai-builders.space` platform. After pushing changes to `main`, redeploy with:
+`ai-builders.space` platform. After pushing changes to `main`on GitHub, redeploy with:
 
 ```bash
 cd Code
@@ -131,6 +94,5 @@ See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the full guide.
 ## Documentation
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — system overview
-- [docs/SECRETS.md](docs/SECRETS.md) — managing tokens and keys
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — deployment guide
 - [docs/VERIFICATION.md](docs/VERIFICATION.md) — verification steps
