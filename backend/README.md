@@ -1,6 +1,6 @@
-# Define & Translate Backend
+# Define & Translate Backend Local Setup
 
-FastAPI backend for the Define & Translate Chrome extension.
+Local FastAPI backend for the Define & Translate Chrome extension.
 
 ## Setup
 
