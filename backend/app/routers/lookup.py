@@ -5,7 +5,6 @@ import json as _json
 import logging
 import time
 import uuid
-from urllib.parse import urlparse, urlunparse
 
 import httpx
 from upstash_redis.errors import UpstashError
@@ -39,14 +38,7 @@ def get_settings() -> Settings:
 
 
 def get_client_ip(request: Request, trusted_hops: int) -> str:
-    """Return the real client IP for rate limiting.
-
-    Behind this platform, a fixed number of trusted proxies (platform proxy +
-    Cloudflare) append to ``X-Forwarded-For``, so the genuine client IP is the
-    entry ``trusted_hops`` positions from the right. Anything further left is
-    client-supplied and must not be trusted (it can be spoofed to bypass
-    per-IP limits). Verified empirically across home, VPN and cellular networks.
-    """
+    """Return the real client IP for rate limiting."""
     xff = request.headers.get("x-forwarded-for")
     if xff:
         parts = [p.strip() for p in xff.split(",") if p.strip()]
@@ -58,11 +50,6 @@ def get_client_ip(request: Request, trusted_hops: int) -> str:
             return parts[-1]
     return request.client.host if request.client else "0.0.0.0"
 
-
-def canonicalize_page_url(url: str) -> str:
-    """Strip query and fragment for abuse control."""
-    parsed = urlparse(url)
-    return urlunparse((parsed.scheme, parsed.netloc, parsed.path, "", "", ""))
 
 
 async def wait_for_disconnect(request: Request) -> None:
@@ -107,7 +94,6 @@ async def lookup(
     from datetime import datetime, timezone
     utc_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    page_url_canonical = canonicalize_page_url(body.page_url)
     client_ip = get_client_ip(request, settings.trusted_proxy_hops)
     hashed_ip = hash_client_ip(client_ip, settings.hmac_secret)
 
@@ -126,7 +112,6 @@ async def lookup(
             hashed_ip,
             body.extension_version,
             body.mode,
-            page_url_canonical,
             http_status,
             error_code,
             error_message,
@@ -307,35 +292,35 @@ async def lookup(
         except httpx.ConnectError as e:
             log_error(
                 server_request_id, body.client_request_id, body.install_id, hashed_ip,
-                body.extension_version, body.mode, page_url_canonical,
+                body.extension_version, body.mode,
                 200, "REDIS_CONNECT_ERROR",
                 internal_message=str(e),
             )
         except UpstashError as e:
             log_error(
                 server_request_id, body.client_request_id, body.install_id, hashed_ip,
-                body.extension_version, body.mode, page_url_canonical,
+                body.extension_version, body.mode,
                 200, _classify_redis_error(e),
                 internal_message=str(e),
             )
         except httpx.TransportError as e:
             log_error(
                 server_request_id, body.client_request_id, body.install_id, hashed_ip,
-                body.extension_version, body.mode, page_url_canonical,
+                body.extension_version, body.mode,
                 200, "REDIS_TRANSPORT_ERROR",
                 internal_message=str(e),
             )
         except _json.JSONDecodeError as e:
             log_error(
                 server_request_id, body.client_request_id, body.install_id, hashed_ip,
-                body.extension_version, body.mode, page_url_canonical,
+                body.extension_version, body.mode,
                 200, "REDIS_RESPONSE_INVALID",
                 internal_message=str(e),
             )
         except Exception as e:
             log_error(
                 server_request_id, body.client_request_id, body.install_id, hashed_ip,
-                body.extension_version, body.mode, page_url_canonical,
+                body.extension_version, body.mode,
                 200, "REDIS_ERROR",
                 internal_message=str(e),
             )

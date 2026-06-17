@@ -79,7 +79,6 @@ def log_error(
     hashed_ip: str | None,
     extension_version: str | None,
     mode: str | None,
-    page_url_canonical: str | None,
     http_status: int,
     error_code: str,
     error_message: str = "",
@@ -89,7 +88,7 @@ def log_error(
 ) -> None:
     """Emit one structured JSON error event per TR-1.05.
 
-    Never pass selected_text or full_context to this function.
+    Never pass selected_text, full_context, or page_url to this function.
     For Pydantic validation errors use _sanitize_pydantic_errors() to build
     internal_message so that the raw input and ctx fields are excluded.
     """
@@ -103,7 +102,6 @@ def log_error(
             "hashed_ip": hashed_ip,
             "extension_version": extension_version,
             "mode": mode,
-            "page_url_canonical": page_url_canonical,
             "http_status": http_status,
             "error_code": error_code,
             "error_message": error_message,
