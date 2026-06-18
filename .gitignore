@@ -13,6 +13,9 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# Extension prod build (generated artifact — not source code)
+extension-prod/
+
 # OS / editor
 .DS_Store
 Thumbs.db

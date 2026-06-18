@@ -24,10 +24,6 @@ const UNSUPPORTED_URL_KEYWORDS = [
   "payment", "checkout"
 ];
 
-// API base URL. Defaults to the deployed production backend.
-// For local development, override it without editing code by running this in
-// the extension's service-worker console:
-//   chrome.storage.local.set({ api_base_url: "http://localhost:8000" })
 const API_BASE_URL = "https://define-translate.ai-builders.space";
 
 if (typeof window !== "undefined") {
