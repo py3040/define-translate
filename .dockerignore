@@ -11,6 +11,5 @@ docs
 *.md
 backend/scripts
 backend/tests
-deploy-config*.json
 .git
 .gitignore
