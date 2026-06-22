@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     hmac_secret: str
     fingerprint_secret: str
     ai_builder_timeout_sec: float = 60.0  # Timeout for AI Builder Space API calls
+    # Controls whether the FastAPI docs (/docs, /redoc, /openapi.json) are exposed.
+    environment: str = "production"
     # Number of trusted proxies that append to X-Forwarded-For before the request
     # reaches this app. The real client IP is the entry this many positions from
     # the right.

@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 
+from app.config import Settings
 from app.routers import analytics, lookup
 from app.services.errors import (
     _classify_validation_error,
@@ -20,7 +21,16 @@ from app.services.logging_config import request_route, setup_logging
 setup_logging()
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
-app = FastAPI(title="Define & Translate API", version="1.0.0")
+settings = Settings()
+_docs_enabled = settings.environment == "development"
+
+app = FastAPI(
+    title="Define & Translate API",
+    version="1.0.0",
+    docs_url="/docs" if _docs_enabled else None,
+    redoc_url="/redoc" if _docs_enabled else None,
+    openapi_url="/openapi.json" if _docs_enabled else None,
+)
 
 app.add_middleware(
     CORSMiddleware,
