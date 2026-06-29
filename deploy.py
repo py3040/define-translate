@@ -121,8 +121,8 @@ def main():
         log_type = sys.argv[2] if len(sys.argv) > 2 else "build"
         url = f"{base}/v1/deployments/{SERVICE_NAME}/logs?log_type={log_type}"
         if log_type == "runtime":
-            url += "&timeout=300"
-        http_timeout = 320 if log_type == "runtime" else 90
+            url += "&timeout=60"
+        http_timeout = 120 if log_type == "runtime" else 90
         status, data = request("GET", url, token, timeout=http_timeout)
         print("HTTP", status)
         print(json.dumps(data, indent=2)[:6000])
