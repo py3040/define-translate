@@ -131,6 +131,8 @@ def main():
         logs_dir.mkdir(exist_ok=True)
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         log_file = logs_dir / f"{log_type}_{timestamp}.json"
+        if isinstance(data.get("logs"), str):
+            data["logs"] = [line for line in data["logs"].split("\n") if line]
         log_file.write_text(json.dumps(data, indent=2), encoding="utf-8")
         print(f"Log saved to: {log_file}")
 
