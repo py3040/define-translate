@@ -118,6 +118,7 @@ def main():
             print("HEALTH probe error:", type(e).__name__, str(e)[:200])
 
     elif action == "logs":
+        import datetime
         log_type = sys.argv[2] if len(sys.argv) > 2 else "build"
         url = f"{base}/v1/deployments/{SERVICE_NAME}/logs?log_type={log_type}"
         if log_type == "runtime":
@@ -125,7 +126,13 @@ def main():
         http_timeout = 120 if log_type == "runtime" else 90
         status, data = request("GET", url, token, timeout=http_timeout)
         print("HTTP", status)
-        print(json.dumps(data, indent=2)[:6000])
+
+        logs_dir = Path(__file__).resolve().parent.parent / "logs"
+        logs_dir.mkdir(exist_ok=True)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        log_file = logs_dir / f"{log_type}_{timestamp}.json"
+        log_file.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        print(f"Log saved to: {log_file}")
 
     else:
         sys.exit(f"Unknown action: {action!r}. Use: deploy | status | logs")
