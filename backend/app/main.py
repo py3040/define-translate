@@ -21,9 +21,6 @@ from app.services.logging_config import request_route, setup_logging
 setup_logging()
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
-# TEMPORARY — retention test marker. Remove once retention period is confirmed.
-logging.getLogger(__name__).info("RETENTION_TEST_MARKER_XK7Q")
-
 settings = Settings()
 _docs_enabled = settings.environment == "development"
 
