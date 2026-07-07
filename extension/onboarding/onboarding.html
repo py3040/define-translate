@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Define &amp; Translate</title>
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <main class="ob-page">
+    <div class="ob-card">
+
+      <!-- ── Consent view (shown on load) ── -->
+      <div id="consent-view">
+
+        <div class="ob-header">
+          <img src="../icons/icon128.png" alt="Define &amp; Translate icon" class="ob-icon">
+          <h1 class="ob-title">Welcome to Define &amp;&nbsp;Translate</h1>
+          <p class="ob-subtitle">AI-powered contextual definitions and translations for any text you select on the web.</p>
+        </div>
+
+        <div class="ob-divider"></div>
+
+        <section class="ob-disclosure">
+          <h2 class="ob-disclosure-heading">Before you get started</h2>
+          <p class="ob-disclosure-intro">
+            To provide the service, this extension collects the following data. Please review it before continuing.
+          </p>
+
+          <div class="ob-item">
+            <div class="ob-item-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="6.5" y1="7" x2="13.5" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="6.5" y1="10" x2="13.5" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="6.5" y1="13" x2="10.5" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="ob-item-body">
+              <p class="ob-item-title">Selected text and surrounding context</p>
+              <p class="ob-item-desc">
+                The text you select and its surrounding text (together up to 300 characters in total) is sent to a
+                third-party AI service to generate the definition and translation.
+                <strong>It is your responsibility to ensure no personal and confidential information is selected or in the surrounding text</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="ob-item">
+            <div class="ob-item-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="ob-item-body">
+              <p class="ob-item-title">Anonymous installation ID &amp; IP address</p>
+              <p class="ob-item-desc">
+                A random installation ID and your IP address are used for rate-limiting, usage analytics, and troubleshooting.
+                We apply a <strong>non-reversible security measure</strong> to your IP address before storing it and it is retained for <strong>15 days</strong>.
+              </p>
+            </div>
+          </div>
+
+        </section>
+
+        <div class="ob-divider"></div>
+
+        <div class="ob-consent-note">
+          By clicking <strong>Get Started</strong>, you agree to this data collection as described
+          in our <a id="privacy-link" href="#" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+        </div>
+
+        <div class="ob-actions">
+          <button class="ob-btn ob-btn-primary" id="agree-btn">Get Started</button>
+          <button class="ob-btn ob-btn-secondary" id="decline-btn">Decline</button>
+        </div>
+
+      </div><!-- /#consent-view -->
+
+      <!-- ── Decline view (hidden until user clicks Decline) ── -->
+      <div id="decline-view" hidden>
+
+        <div class="ob-decline-nav">
+          <button class="ob-back-btn" id="back-btn">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back
+          </button>
+        </div>
+
+        <div class="ob-decline-body">
+          <div class="ob-decline-icon" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18.25" stroke="currentColor" stroke-width="1.5" opacity="0.25"/>
+              <path d="M20 12v9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="20" cy="26.5" r="1.25" fill="currentColor"/>
+            </svg>
+          </div>
+          <h2 class="ob-decline-heading">Sorry to see you go</h2>
+          <p class="ob-decline-text">
+            The extension will not collect any data. To remove it from Chrome, please follow one of the steps below.
+          </p>
+
+          <div class="ob-uninstall-steps">
+            <div class="ob-uninstall-step">
+              <span class="ob-step-num">1</span>
+              <p><strong>Right-click</strong> the Define &amp; Translate icon in the Chrome toolbar, then select <strong>"Remove from Chrome"</strong></p>
+            </div>
+            <p class="ob-uninstall-or">or</p>
+            <div class="ob-uninstall-step">
+              <span class="ob-step-num">2</span>
+              <p>Go to <strong>chrome://extensions</strong>, find Define &amp; Translate, and click <strong>"Remove"</strong></p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /#decline-view -->
+
+    </div>
+  </main>
+  <script src="onboarding.js"></script>
+</body>
+</html>

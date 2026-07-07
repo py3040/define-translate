@@ -6,6 +6,14 @@
 
 const abortControllers = new Map();
 
+// Open the onboarding page on first install so the user can review the data
+// disclosure and grant consent before any data is collected.
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("onboarding/onboarding.html") });
+  }
+});
+
 chrome.runtime.onMessage.addListener(
   (message, sender, sendResponse) => {
     if (message.type === "fetchLookup") {
@@ -14,6 +22,11 @@ chrome.runtime.onMessage.addListener(
     }
     if (message.type === "abortLookup") {
       handleAbortLookup(message);
+      sendResponse({ ok: true });
+      return false;
+    }
+    if (message.type === "openOnboarding") {
+      chrome.tabs.create({ url: chrome.runtime.getURL("onboarding/onboarding.html") });
       sendResponse({ ok: true });
       return false;
     }

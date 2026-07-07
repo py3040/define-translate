@@ -403,6 +403,11 @@
     return chrome?.runtime?.getManifest?.()?.version || "1.0.0";
   }
 
+  async function hasUserConsent() {
+    const r = await chrome.storage.local.get("userConsent");
+    return r.userConsent === true;
+  }
+
   function uuid4() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0;
@@ -911,20 +916,29 @@
     if (defineClickDebounceTimer) return;
     defineClickDebounceTimer = setTimeout(() => { defineClickDebounceTimer = null; }, 500);
     hideDefineButton();
-    const sel = window.getSelection();
-    const text = sel?.toString()?.trim() || "";
-    if (!text) return;
-    if (text.length > MAX_LEN) {
+
+    hasUserConsent().then((consented) => {
+      if (!consented) {
+        // Open the onboarding page so the user can review the disclosure and consent.
+        chrome.runtime.sendMessage({ type: "openOnboarding" });
+        return;
+      }
+
+      const sel = window.getSelection();
+      const text = sel?.toString()?.trim() || "";
+      if (!text) return;
+      if (text.length > MAX_LEN) {
+        showPanel(text).then((ok) => {
+          if (ok) showMessage("Please keep selection within 300 characters");
+        });
+        return;
+      }
+      // Snapshot context while the selection is still live; showPanel() + awaits in
+      // fetchLookup can collapse the selection before getFullContext would otherwise run.
+      const fullContext = getFullContext(text);
       showPanel(text).then((ok) => {
-        if (ok) showMessage("Please keep selection within 300 characters");
+        if (ok) fetchLookup(text, null, undefined, undefined, fullContext);
       });
-      return;
-    }
-    // Snapshot context while the selection is still live; showPanel() + awaits in
-    // fetchLookup can collapse the selection before getFullContext would otherwise run.
-    const fullContext = getFullContext(text);
-    showPanel(text).then((ok) => {
-      if (ok) fetchLookup(text, null, undefined, undefined, fullContext);
     });
   }
 
