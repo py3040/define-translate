@@ -344,6 +344,7 @@ async def lookup(
         raise
     except UpstreamAuthError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream auth) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             503, "UPSTREAM_AUTH_ERROR",
@@ -353,6 +354,7 @@ async def lookup(
         )
     except UpstreamRateLimitedError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream rate limited) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             503, "UPSTREAM_RATE_LIMITED",
@@ -362,6 +364,7 @@ async def lookup(
         )
     except UpstreamTimeoutError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream gateway timeout) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             503, "UPSTREAM_GATEWAY_TIMEOUT",
@@ -371,6 +374,7 @@ async def lookup(
         )
     except UpstreamRequestFailedError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream request failed) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             500, "UPSTREAM_REQUEST_FAILED",
@@ -380,6 +384,7 @@ async def lookup(
         )
     except UpstreamResponseInvalidError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream response invalid) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             502, "UPSTREAM_RESPONSE_INVALID",
@@ -389,6 +394,7 @@ async def lookup(
         )
     except UpstreamResponseTooLongError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream response too long) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             502, "UPSTREAM_RESPONSE_TOO_LONG",
@@ -398,6 +404,7 @@ async def lookup(
         )
     except UpstreamClientError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream client error) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             503, "UPSTREAM_CLIENT_ERROR",
@@ -407,6 +414,7 @@ async def lookup(
         )
     except UpstreamError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: upstream error) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             503, "UPSTREAM_ERROR",
@@ -416,6 +424,7 @@ async def lookup(
         )
     except httpx.TimeoutException as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: httpx timeout) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         return _err(
             503, "UPSTREAM_TIMEOUT",
@@ -424,6 +433,7 @@ async def lookup(
         )
     except httpx.ConnectError as e:
         timing_ms["total"] = (time.perf_counter() - t_start) * 1000
+        release_inflight(redis, fingerprint)
         logger.info("Lookup timing (error: httpx connect) server_request_id=%s timing_ms=%s", server_request_id, timing_ms)
         req_url = getattr(e.request, "url", None)
         cause = str(e.__cause__) if e.__cause__ else ""
