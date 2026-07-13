@@ -109,7 +109,6 @@ async def lookup(
             server_request_id,
             body.client_request_id,
             body.install_id,
-            hashed_ip,
             body.extension_version,
             body.mode,
             http_status,
@@ -291,35 +290,35 @@ async def lookup(
             set_cache(redis, fingerprint, response_payload)
         except httpx.ConnectError as e:
             log_error(
-                server_request_id, body.client_request_id, body.install_id, hashed_ip,
+                server_request_id, body.client_request_id, body.install_id,
                 body.extension_version, body.mode,
                 200, "REDIS_CONNECT_ERROR",
                 internal_message=str(e),
             )
         except UpstashError as e:
             log_error(
-                server_request_id, body.client_request_id, body.install_id, hashed_ip,
+                server_request_id, body.client_request_id, body.install_id,
                 body.extension_version, body.mode,
                 200, _classify_redis_error(e),
                 internal_message=str(e),
             )
         except httpx.TransportError as e:
             log_error(
-                server_request_id, body.client_request_id, body.install_id, hashed_ip,
+                server_request_id, body.client_request_id, body.install_id,
                 body.extension_version, body.mode,
                 200, "REDIS_TRANSPORT_ERROR",
                 internal_message=str(e),
             )
         except _json.JSONDecodeError as e:
             log_error(
-                server_request_id, body.client_request_id, body.install_id, hashed_ip,
+                server_request_id, body.client_request_id, body.install_id,
                 body.extension_version, body.mode,
                 200, "REDIS_RESPONSE_INVALID",
                 internal_message=str(e),
             )
         except Exception as e:
             log_error(
-                server_request_id, body.client_request_id, body.install_id, hashed_ip,
+                server_request_id, body.client_request_id, body.install_id,
                 body.extension_version, body.mode,
                 200, "REDIS_ERROR",
                 internal_message=str(e),
