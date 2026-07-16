@@ -1,14 +1,4 @@
-/**
- * Define & Translate — Onboarding page
- *
- * Stores the user's consent decision in chrome.storage.local under the key
- * "userConsent" (boolean). The content script checks this flag before making
- * any API call that transmits user data.
- *
- * TODO: Replace PRIVACY_POLICY_URL with the actual hosted URL before publishing.
- */
-
-const PRIVACY_POLICY_URL = "https://[YOUR_PRIVACY_POLICY_URL]";
+const PRIVACY_POLICY_URL = "https://pybuilds.com/define-translate/privacy";
 
 const agreeBtn    = document.getElementById("agree-btn");
 const declineBtn  = document.getElementById("decline-btn");
