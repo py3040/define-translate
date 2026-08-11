@@ -210,7 +210,7 @@
 
   /**
    * Document Selection for native input/textarea is unreliable; use range endpoints, anchor/focus,
-   * and common ancestor (FR-1.01-01a / FR-1.02-01a).
+   * and common ancestor.
    */
   function isSelectionInsideEditableField(sel) {
     if (!sel || sel.rangeCount === 0) return false;
@@ -234,7 +234,7 @@
 
   /**
    * When the focused control is input/textarea, selection often matches value slice even if
-   * anchorNode does not point into the field (FR-1.02-01a).
+   * anchorNode does not point into the field.
    */
   function isActiveNativeFieldSelection(text) {
     if (!text) return false;
@@ -316,7 +316,7 @@
     return selectionIntersectsNonTextMedia(sel) || selectionInvolvesCodeOrScript(sel);
   }
 
-  /** FR-1.02-01a: no Define button, no panel refresh, no lookup. */
+  /** No Define button, no panel refresh, no lookup. */
   function shouldIgnoreSelectionForDefineAndLookup(sel, text) {
     return (
       isSelectionInsideEditableField(sel) ||

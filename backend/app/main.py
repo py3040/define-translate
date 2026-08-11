@@ -6,6 +6,7 @@ import uuid
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import Settings
 from app.routers import analytics, lookup
@@ -42,6 +43,17 @@ app.add_middleware(
 
 app.include_router(lookup.router, prefix="/api", tags=["lookup"])
 app.include_router(analytics.router, prefix="/api", tags=["analytics"])
+
+# Generic fallback for any bare-string HTTPException(status_code=...) raised
+# without a structured detail (e.g. framework-raised 404/405). Auth guards set a
+# richer detail dict instead so their error_code/server_request_id survive intact.
+_FALLBACK_HTTP_ERROR_CODES = {
+    401: "UNAUTHORIZED",
+    403: "FORBIDDEN",
+    404: "NOT_FOUND",
+    405: "METHOD_NOT_ALLOWED",
+    503: "SERVICE_UNAVAILABLE",
+}
 
 
 @app.middleware("http")
@@ -96,6 +108,22 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         internal_message=_sanitize_pydantic_errors(errors),
     )
     return map_validation_error(errors, server_request_id)
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    if isinstance(exc.detail, dict) and "error_code" in exc.detail:
+        server_request_id = exc.detail.get("server_request_id") or str(uuid.uuid4())
+        return error_response(
+            exc.status_code,
+            exc.detail["error_code"],
+            exc.detail.get("error_message", "An error occurred."),
+            server_request_id,
+        )
+    server_request_id = str(uuid.uuid4())
+    error_code = _FALLBACK_HTTP_ERROR_CODES.get(exc.status_code, "HTTP_ERROR")
+    error_message = exc.detail if isinstance(exc.detail, str) else "An error occurred."
+    return error_response(exc.status_code, error_code, error_message, server_request_id)
 
 
 @app.exception_handler(Exception)

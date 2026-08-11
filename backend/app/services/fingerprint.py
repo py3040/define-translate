@@ -1,4 +1,4 @@
-"""Request fingerprint for cache key per TR-1.01-12."""
+"""Request fingerprint for cache key."""
 
 import base64
 import hmac

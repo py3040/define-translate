@@ -1,8 +1,10 @@
 # Secrets — never commit these (public repo)
 .env
 *.env
+.env.*
 !.env.example
 backend/.env
+extension/background/config.local.js
 
 # Python
 __pycache__/
@@ -11,9 +13,6 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
-
-# Extension prod
-extension-prod/
 
 # OS / editor
 .DS_Store

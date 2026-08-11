@@ -1,4 +1,4 @@
-"""Request normalization per TR-1.01-11."""
+"""Request normalization."""
 
 import unicodedata
 from app.models.schemas import ALLOWED_LANGUAGES

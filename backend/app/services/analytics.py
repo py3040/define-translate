@@ -1,14 +1,4 @@
-"""Analytics writes for lookup requests.
-
-Keys written to Upstash Redis:
-  analytics:dau:{YYYY-MM-DD}     — Redis Set of install_id strings
-  analytics:success:{YYYY-MM-DD} — Integer counter (successful lookups)
-  analytics:fail:{YYYY-MM-DD}    — Integer counter (failed lookups)
-
-Every key expires at midnight UTC exactly 15 calendar days after the
-date the key represents (implemented via EXPIREAT with an absolute
-Unix timestamp so the expiry is always a precise wall-clock moment).
-"""
+"""Analytics writes for lookup requests."""
 
 import logging
 from datetime import datetime, timezone, timedelta

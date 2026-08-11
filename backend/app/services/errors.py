@@ -1,4 +1,4 @@
-"""Error response helpers per Requirements_backend.csv."""
+"""Error response helpers."""
 
 import logging
 
@@ -51,7 +51,7 @@ def _classify_validation_error(errors: list) -> tuple[int, str, str]:
 
 
 def _sanitize_pydantic_errors(errors: list) -> str:
-    """Serialise Pydantic validation errors per TR-1.05-03a.
+    """Serialise Pydantic validation errors.
 
     Only type, loc, and msg are included.  The input and ctx fields are
     deliberately excluded because they may contain raw field values such as
@@ -67,7 +67,7 @@ def _sanitize_pydantic_errors(errors: list) -> str:
 
 
 def map_validation_error(errors: list, server_request_id: str) -> JSONResponse:
-    """Map Pydantic validation errors to TR-1.01-09 error codes."""
+    """Map Pydantic validation errors to error codes."""
     http_status, error_code, error_message = _classify_validation_error(errors)
     return error_response(http_status, error_code, error_message, server_request_id)
 
@@ -85,7 +85,7 @@ def log_error(
     upstream_status: int | None = None,
     exc_info: bool = False,
 ) -> None:
-    """Emit one structured JSON error event per TR-1.05.
+    """Emit one structured JSON error event.
 
     Never pass selected_text, full_context, or page_url to this function.
     For Pydantic validation errors use _sanitize_pydantic_errors() to build

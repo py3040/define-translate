@@ -1,20 +1,8 @@
-"""Admin analytics endpoint.
-
-GET /api/admin/analytics?days=N
-
-Returns DAU, active-user count, and daily success/failure counts for the
-last N UTC dates (today inclusive), where N defaults to 7 and is capped at
-14 (the maximum number of days for which data may still be present given the
-15-calendar-day Redis TTL).  The period-level active-user count and lookup
-totals are computed at query time by aggregating the N daily Redis keys; they
-are not stored separately.
-
-Missing keys (no lookups that day, or key already expired) are treated
-as zero per TR-1.06-06.
-"""
+"""Admin analytics router for recording and retrieving daily active users and lookup success/failure counts."""
 
 import hmac
 import logging
+import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Annotated
 
@@ -31,17 +19,60 @@ _MAX_DAYS = 14
 router = APIRouter()
 
 
-def require_admin(x_admin_key: Annotated[str | None, Header()] = None) -> None:
-    """Guard the admin endpoint with a static key compared in constant time.
-
-    Fails closed: if ADMIN_KEY is not configured, the endpoint is locked (503)
-    rather than left publicly readable.
-    """
+def require_admin(
+    x_admin_key: Annotated[str | None, Header()] = None,
+) -> None:
     key = Settings().admin_key
+    server_request_id = str(uuid.uuid4())
+
     if not key:
-        raise HTTPException(status_code=503, detail="Admin endpoint not configured")
+        http_status, error_code, error_message = (
+            503,
+            "ADMIN_NOT_CONFIGURED",
+            "Admin endpoint is not available.",
+        )
+        logger.error(
+            "admin_auth_failure",
+            extra={
+                "server_request_id": server_request_id,
+                "auth_reason": "not_configured",
+                "http_status": http_status,
+                "error_code": error_code,
+                "error_message": error_message,
+            },
+        )
+        raise HTTPException(
+            status_code=http_status,
+            detail={
+                "error_code": error_code,
+                "error_message": error_message,
+                "server_request_id": server_request_id,
+            },
+        )
     if not x_admin_key or not hmac.compare_digest(x_admin_key, key):
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        http_status, error_code, error_message = (
+            401,
+            "UNAUTHORIZED_ADMIN_KEY",
+            "Unauthorized.",
+        )
+        logger.warning(
+            "admin_auth_failure",
+            extra={
+                "server_request_id": server_request_id,
+                "auth_reason": "missing_key" if not x_admin_key else "invalid_key",
+                "http_status": http_status,
+                "error_code": error_code,
+                "error_message": error_message,
+            },
+        )
+        raise HTTPException(
+            status_code=http_status,
+            detail={
+                "error_code": error_code,
+                "error_message": error_message,
+                "server_request_id": server_request_id,
+            },
+        )
 
 
 @router.get("/admin/analytics", dependencies=[Depends(require_admin)])

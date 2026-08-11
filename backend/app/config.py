@@ -19,10 +19,10 @@ class Settings(BaseSettings):
     ai_builder_timeout_sec: float = 60.0  # Timeout for AI Builder Space API calls
     # Controls whether the FastAPI docs (/docs, /redoc, /openapi.json) are exposed.
     environment: str = "production"
-    # Number of trusted proxies that append to X-Forwarded-For before the request
-    # reaches this app. The real client IP is the entry this many positions from
-    # the right.
     trusted_proxy_hops: int = 2
-    # Required to access GET /api/admin/analytics. If unset, that endpoint is
+    # Required to access the analytics endpoint. If unset, that endpoint is
     # locked (fails closed with 503) rather than being publicly readable.
     admin_key: str | None = None
+    # Required to access the lookup endpoint. If unset, that endpoint is 
+    # locked (fails closed with 503) rather than being publicly callable.
+    extension_api_key: str | None = None

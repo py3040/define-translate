@@ -2,26 +2,23 @@
 
 ## Overview
 
-The extension allows users to select text on HTTPS pages and view AI-generated contextual meaning and translation in a floating panel. The FastAPI backend validates requests, enforces limits, and calls AI Builder Space.
+The extension allows users to select text on HTTPS pages (excluding login and payment pages) and view AI-generated contextual meaning and translation in a floating panel. The FastAPI backend validates requests, enforces limits, and calls AI Builder Space. Upstash Redis stores usage counters, cache, in-flight locks and simple analytics.
 
 ## Components
 
 ```
-Extension (Content Script) → FastAPI → AI Builder Space
-                    ↓
-              Upstash Redis (usage, cache, in-flight)
+Extension → FastAPI → AI Builder Space
+                ↓
+          Upstash Redis
 ```
 
-## Data Flow
+## Sequence of events
 
 1. User selects text → Define button appears (if supported)
 2. User clicks Define → Panel opens, request sent to FastAPI
-3. FastAPI validates, checks usage, cache, in-flight dedupe
-4. On cache miss: call AI Builder Space, cache response
+3. FastAPI validates request, checks cache, usage, and in-flight dedupe
+4. On cache miss: FastAPI calls AI Builder Space
+5. FastAPI validates AI response, increases usage, caches response and records analytics
 5. Extension displays meaning/translation
 
-## Security
 
-- All secrets in environment variables
-- IP hashing (HMAC-SHA256) for abuse control
-- HTTPS only, no raw IP storage

@@ -4,6 +4,19 @@
  * (avoids Local Network Access permission prompt on the host page).
  */
 
+// Caught so a missing config degrades to a diagnosable per-request error rather
+// than blocking service worker registration, which would also break onboarding.
+let configLoaded = true;
+try {
+  importScripts("/background/config.local.js");
+} catch {
+  configLoaded = false;
+  console.error(
+    '[DT] Setup incomplete: create background/config.local.js containing ' +
+      'const EXTENSION_API_KEY = "<same value as EXTENSION_API_KEY in backend/.env>";'
+  );
+}
+
 const abortControllers = new Map();
 
 // Open the onboarding page on first install so the user can review the data
@@ -35,6 +48,20 @@ chrome.runtime.onMessage.addListener(
 
 async function handleFetchLookup(message, sendResponse) {
   const { requestId, apiBase, payload } = message;
+
+  if (!configLoaded) {
+    sendResponse({
+      requestId,
+      ok: false,
+      data: {
+        error_code: "EXTENSION_NOT_CONFIGURED",
+        error_message:
+          "Extension setup is incomplete. Check the service worker console for details.",
+      },
+    });
+    return;
+  }
+
   const controller = new AbortController();
   abortControllers.set(requestId, controller);
 
@@ -42,7 +69,10 @@ async function handleFetchLookup(message, sendResponse) {
     const tStart = performance.now();
     const res = await fetch(`${apiBase}/api/lookup`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-Extension-Key": EXTENSION_API_KEY,
+      },
       body: JSON.stringify(payload),
       signal: controller.signal,
     });

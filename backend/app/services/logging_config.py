@@ -1,10 +1,12 @@
-"""JSON logging configuration per TR-1.05."""
+"""JSON logging configuration."""
 
 import datetime
 import logging
 from contextvars import ContextVar
 
 from pythonjsonlogger import jsonlogger
+
+JSON_HANDLER_NAME = "app_json"
 
 # Set once per request by the route-context middleware in main.py.
 # The _AppContextFilter reads it so every log record emitted during
@@ -50,6 +52,7 @@ def setup_logging() -> None:
     ctx_filter = _AppContextFilter()
 
     handler = logging.StreamHandler()
+    handler.set_name(JSON_HANDLER_NAME)
     handler.setFormatter(formatter)
     handler.addFilter(ctx_filter)
 

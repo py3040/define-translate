@@ -1,14 +1,16 @@
-"""Lookup API router."""
+"""Lookup router for handling lookup requests from the extension."""
 
 import asyncio
+import hmac
 import json as _json
 import logging
 import time
 import uuid
+from typing import Annotated
 
 import httpx
 from upstash_redis.errors import UpstashError
-from fastapi import APIRouter, BackgroundTasks, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Request
 
 from app.models.schemas import LookupRequest, LookupSuccessResponse, LookupErrorResponse
 
@@ -37,8 +39,65 @@ def get_settings() -> Settings:
     return Settings()
 
 
+def require_extension_key(
+    x_extension_key: Annotated[str | None, Header()] = None,
+) -> None:
+    settings = get_settings()
+    key = settings.extension_api_key
+    server_request_id = str(uuid.uuid4())
+
+    if not key:
+        http_status, error_code, error_message = (
+            503,
+            "LOOKUP_NOT_CONFIGURED",
+            "Lookup endpoint is not available. Please try again later.",
+        )
+        logger.error(
+            "extension_auth_failure",
+            extra={
+                "server_request_id": server_request_id,
+                "auth_reason": "not_configured",
+                "http_status": http_status,
+                "error_code": error_code,
+                "error_message": error_message,
+            },
+        )
+        raise HTTPException(
+            status_code=http_status,
+            detail={
+                "error_code": error_code,
+                "error_message": error_message,
+                "server_request_id": server_request_id,
+            },
+        )
+    if not x_extension_key or not hmac.compare_digest(x_extension_key, key):
+        http_status, error_code, error_message = (
+            401,
+            "UNAUTHORIZED_EXTENSION_KEY",
+            "Lookup request is unauthorized.",
+        )
+        logger.warning(
+            "extension_auth_failure",
+            extra={
+                "server_request_id": server_request_id,
+                "auth_reason": "missing_key" if not x_extension_key else "invalid_key",
+                "http_status": http_status,
+                "error_code": error_code,
+                "error_message": error_message,
+            },
+        )
+        raise HTTPException(
+            status_code=http_status,
+            detail={
+                "error_code": error_code,
+                "error_message": error_message,
+                "server_request_id": server_request_id,
+            },
+        )
+
+
 def get_client_ip(request: Request, trusted_hops: int) -> str:
-    """Return the real client IP for rate limiting."""
+    """Return client IP for rate limiting."""
     xff = request.headers.get("x-forwarded-for")
     if xff:
         parts = [p.strip() for p in xff.split(",") if p.strip()]
@@ -80,7 +139,7 @@ def _classify_redis_error(e: UpstashError) -> str:
 router = APIRouter()
 
 
-@router.post("/lookup")
+@router.post("/lookup", dependencies=[Depends(require_extension_key)])
 async def lookup(
     body: LookupRequest,
     request: Request,

@@ -33,7 +33,7 @@ def _build_prompt(
     full_context_norm: str | None,
     target_language_norm: str | None,
 ) -> str:
-    """Build mode-specific prompt per TR-1.02-04c."""
+    """Build mode-specific prompt."""
     # Only add context when it differs from selection and adds useful info
     has_context = bool(
         full_context_norm
@@ -95,7 +95,7 @@ def _extract_json(content: str) -> str:
 
 
 def _parse_response(mode: str, content: str) -> dict:
-    """Parse and validate AI response JSON per TR-1.03-04."""
+    """Parse and validate AI response JSON."""
     content = _extract_json(content)
     parsed = json.loads(content)
 
