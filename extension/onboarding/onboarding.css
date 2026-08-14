@@ -60,12 +60,12 @@ body {
 
 .ob-card {
   width: 100%;
-  max-width: 500px;
+  max-width: 820px;
   background: var(--ob-bg-card);
   border: 1px solid var(--ob-border);
   border-radius: var(--ob-radius);
   box-shadow: var(--ob-shadow);
-  padding: 36px 36px 32px;
+  padding: 36px 52px 32px;
 }
 
 /* ── Header ── */
@@ -105,7 +105,7 @@ body {
 .ob-divider {
   height: 1px;
   background: var(--ob-border);
-  margin: 0 -36px 24px;
+  margin: 0 -52px 24px;
 }
 
 /* ── Disclosure section ── */
